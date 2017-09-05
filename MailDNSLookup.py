@@ -16,21 +16,28 @@ def emailtxtrecords(host,nameserver):
 		for txtrecord in dns.resolver.query(host,'TXT'):
 			if (re.search('v=spf1',txtrecord.to_text().lower())):
 				records = 1
-				print "[+] --> " + txtrecord.to_text()
+				if (re.search('-all',txtrecord.to_text().lower())):
+					print "\033[92m[+] --> " + txtrecord.to_text() + "\033[0m"
+				else:
+					print "\033[93m[+] --> " + txtrecord.to_text() + "\033[0m"
+
 	except:
 		records = 1
-		print "[-] No Records found"
+		print "\033[91m[-] No Records found\033[0m"
 
 	if records == 0:
-		print "[-] No Records found"
+		print "\033[91m[-] No Records found\033[0m"
 
 	dmarchost = "_dmarc." + host
 	print "[+] TXT Records for %s" % dmarchost
 	try:
 		for txtrecord in dns.resolver.query(dmarchost,'TXT'):
-			print "[+] --> " + txtrecord.to_text()
+			if (re.search('p=none',txtrecord.to_text().lower())):
+				print "\033[93m[+] --> " + txtrecord.to_text() + "\033[0m"
+			else:
+				print "\033[92m[+] --> " + txtrecord.to_text() + "\033[0m"
 	except:
-		print "[-] No Records found"
+		print "\033[91m[-] No Records found\033[0m"
 
 def main():
 	parser = optparse.OptionParser('usage %prog '+ '-d <domain>')
